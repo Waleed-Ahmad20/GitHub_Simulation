@@ -251,6 +251,26 @@ void Repository::viewStats(string repName)
 	cout << "Fork Count: " << tempRep->repositoryForkCount << endl << endl;
 }
 
+void Repository::fileAdd(string repName, string fileName)
+{
+	node* current = findRepository(repName);
+	LinkedlistNode* newFile = new LinkedlistNode(fileName);
+	if (current->file == nullptr)
+	{
+		current->file = newFile;
+	}
+	else
+	{
+		LinkedlistNode* tempFile = current->file;
+		while (tempFile->next != nullptr)
+		{
+			tempFile = tempFile->next;
+		}
+		tempFile->next = newFile;
+	}
+}
+
+
 
 node* Repository::getRoot()
 {
