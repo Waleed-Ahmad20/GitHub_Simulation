@@ -50,4 +50,3 @@ public:
 	node* getRoot();
 };
 
-#endif

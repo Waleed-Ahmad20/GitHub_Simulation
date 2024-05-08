@@ -205,6 +205,52 @@ void Repository::PerformCommit(string repName, string commitText)
 	}
 }
 
+void Repository::viewStats(string repName)
+{
+	node* tempRep = findRepository(repName);
+	cout << "Repository Name: " << tempRep->repositoryName << ", " << "Repository Visibility: ";
+	if (tempRep->visibility == 0)
+	{
+		cout << "Private!" << endl;
+	}
+	else
+	{
+		cout << "Public!" << endl;
+	}
+	LinkedlistNode* tempList = tempRep->file;
+
+	cout << "Files in repository: ";
+	if (tempList != nullptr)
+	{
+		while (tempList != nullptr)
+		{
+			cout << tempList->data << " ";
+			tempList = tempList->next;
+		}
+		cout << endl;
+	}
+	else cout << "No Files!" << endl;
+
+
+	tempList = tempRep->commit;
+	if (tempList != nullptr)
+	{
+		cout << "Commits in Repository: ";
+		while (tempList != nullptr)
+		{
+			cout << tempList->data << " ";
+			tempList = tempList->next;
+		}
+		cout << endl;
+	}
+	else
+	{
+		cout << "No Commits!" << endl;
+	}
+
+	cout << "Fork Count: " << tempRep->repositoryForkCount << endl << endl;
+}
+
 
 node* Repository::getRoot()
 {
