@@ -22,10 +22,13 @@ public:
 	node* repositoryrightChild;
 	int repositoryForkCount;
 
+public:
 	LinkedlistNode* commit;
 	LinkedlistNode* file;
 
 	bool visibility;
+
+	node(string name, bool _visibility);
 };
 class Repository {
 private:

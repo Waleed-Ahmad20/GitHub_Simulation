@@ -11,6 +11,19 @@ LinkedlistNode::LinkedlistNode(string text)
 	next = nullptr;
 }
 
+node::node(string name, bool _visibility)
+{
+	repositoryName = name;
+	visibility = _visibility;
+	repositoryParent = nullptr;
+	repositoryleftChild = nullptr;
+	repositoryrightChild = nullptr;
+	repositoryForkCount = 0;
+	commit = nullptr;
+	file = nullptr;
+
+}
+
 node* Repository::findRepository(string repName) {
 	node* current = rootRepository;
 	while (current) {
@@ -42,16 +55,7 @@ void Repository::repositoryCreate(bool _visibility, string repName)
 {
 	if (findRepository(repName) == nullptr)
 	{
-		node* newRepository = new node();
-		newRepository->repositoryName = repName;
-		newRepository->repositoryParent = nullptr;
-		newRepository->repositoryleftChild = nullptr;
-		newRepository->repositoryrightChild = nullptr;
-		newRepository->repositoryForkCount = 0;
-		newRepository->visibility = _visibility;
-
-		/*newRepository->commit = nullptr;
-		newRepository->file = nullptr;*/
+		node* newRepository = new node(repName, _visibility);
 
 		if (rootRepository == nullptr)
 		{
@@ -182,6 +186,24 @@ void Repository::repDelete(node* deleteNode)
 	}
 }
 
+void Repository::PerformCommit(string repName, string commitText)
+{
+	node* current = findRepository(repName);
+	LinkedlistNode* newCommit = new LinkedlistNode(commitText);
+	if (current->commit == nullptr)
+	{
+		current->commit = newCommit;
+	}
+	else
+	{
+		LinkedlistNode* tempCommit = current->commit;
+		while (tempCommit->next != nullptr)
+		{
+			tempCommit = tempCommit->next;
+		}
+		tempCommit->next = newCommit;
+	}
+}
 
 
 node* Repository::getRoot()
