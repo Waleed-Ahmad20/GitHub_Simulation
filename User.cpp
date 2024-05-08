@@ -12,7 +12,7 @@ string User::getName() {
 	return username;
 }
 
-int User::getID() {
+int User::getUserID() {
 	return userID;
 }
 

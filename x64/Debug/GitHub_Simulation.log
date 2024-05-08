@@ -1,4 +1,5 @@
-﻿  main.cpp
-  Repository.cpp
+﻿  Social.cpp
+  User.cpp
+  main.cpp
   Generating Code...
   GitHub_Simulation.vcxproj -> C:\Users\walee\OneDrive\Documents\GitHub_Simulation\x64\Debug\GitHub_Simulation.exe

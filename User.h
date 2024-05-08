@@ -13,7 +13,7 @@ private:
 public:
 	User(string uName, int uID);
 	string getName();
-	int getID();
+	int getUserID();
 	static int getNumofUsers();
 };
 

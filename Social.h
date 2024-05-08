@@ -3,18 +3,18 @@
 
 #include"User.h"
 
-class node {
+class unode {
 public:
 	string user;
 	int uid;
-	node* next;
-	node(string u, int id);
+	unode* next;
+	unode(string u, int id);
 };
 
 class Social {
 private:
 	int vertices;
-	node** adjacencyLists;
+	unode** adjacencyLists;
 public:
 	Social();
 	void addEdge(User& source, User& destination);
