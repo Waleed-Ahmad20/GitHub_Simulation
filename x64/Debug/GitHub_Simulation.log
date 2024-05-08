@@ -1,3 +1,4 @@
-﻿  Repository.cpp
-MSVCRTD.lib(exe_main.obj) : error LNK2019: unresolved external symbol main referenced in function "int __cdecl invoke_main(void)" (?invoke_main@@YAHXZ)
-C:\Users\walee\OneDrive\Desktop\GitHub_Simulation\x64\Debug\GitHub_Simulation.exe : fatal error LNK1120: 1 unresolved externals
+﻿  main.cpp
+  Repository.cpp
+  Generating Code...
+  GitHub_Simulation.vcxproj -> C:\Users\walee\OneDrive\Documents\GitHub_Simulation\x64\Debug\GitHub_Simulation.exe

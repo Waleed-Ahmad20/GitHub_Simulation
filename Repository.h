@@ -16,7 +16,7 @@ public:
 };
 class Repository {
 private:
-	
+
 	class LinkedlistNode {
 	public:
 		string data;
