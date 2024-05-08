@@ -270,6 +270,19 @@ void Repository::fileAdd(string repName, string fileName)
 	}
 }
 
+void Repository::fileDelete(string repName, string fileName)
+{
+	node* current = findRepository(repName);
+	LinkedlistNode* tempFile = current->file;
+	while (tempFile->next->data != fileName)
+	{
+		tempFile = tempFile->next;
+	}
+	LinkedlistNode* temp = tempFile->next;
+	tempFile->next = temp->next;
+	delete temp;
+	temp = nullptr;
+}
 
 
 node* Repository::getRoot()
