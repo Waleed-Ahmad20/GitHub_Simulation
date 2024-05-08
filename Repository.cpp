@@ -2,8 +2,13 @@
 #include<iostream>
 
 Repository::Repository() {
-	commit = file = nullptr;
 	rootRepository = nullptr;
+}
+
+LinkedlistNode::LinkedlistNode(string text)
+{
+	data = text;
+	next = nullptr;
 }
 
 node* Repository::findRepository(string repName) {
@@ -33,7 +38,7 @@ void Repository::showAllRepositories(node* root)
 	showAllRepositories(root->repositoryrightChild);
 }
 
-void Repository::repositoryCreate(string repName)
+void Repository::repositoryCreate(bool _visibility, string repName)
 {
 	if (findRepository(repName) == nullptr)
 	{
@@ -43,6 +48,10 @@ void Repository::repositoryCreate(string repName)
 		newRepository->repositoryleftChild = nullptr;
 		newRepository->repositoryrightChild = nullptr;
 		newRepository->repositoryForkCount = 0;
+		newRepository->visibility = _visibility;
+
+		/*newRepository->commit = nullptr;
+		newRepository->file = nullptr;*/
 
 		if (rootRepository == nullptr)
 		{
@@ -81,6 +90,95 @@ void Repository::repositoryCreate(string repName)
 	else
 	{
 		cout << "Repository of the same name already exists!" << endl;
+	}
+}
+
+void Repository::repositoryDelete(string repName)
+{
+	node* deleteNode = findRepository(repName);
+
+	if (deleteNode)
+	{
+		repDelete(deleteNode);
+	}
+	else
+	{
+		cout << "No repository with this name exists" << endl;
+	}
+
+}
+
+void Repository::repDelete(node* deleteNode)
+{
+	node* temp = deleteNode;
+	node* parent = temp->repositoryParent;
+	if (deleteNode->repositoryleftChild != nullptr && deleteNode->repositoryrightChild != nullptr)
+	{
+		parent = temp;
+		temp = temp->repositoryrightChild;
+		while (temp->repositoryleftChild != nullptr)
+		{
+			parent = temp;
+			temp = temp->repositoryleftChild;
+		}
+		deleteNode->repositoryName = temp->repositoryName;
+		deleteNode->repositoryForkCount = temp->repositoryForkCount;
+		deleteNode->commit = temp->commit;
+		deleteNode->file = temp->file;
+		deleteNode->visibility = temp->visibility;
+		repDelete(temp);
+
+		return;
+	}
+	else if (deleteNode->repositoryleftChild != nullptr)
+	{
+		temp = deleteNode;
+		parent = temp->repositoryParent;
+		deleteNode = deleteNode->repositoryleftChild;
+		if (parent->repositoryleftChild == temp)
+		{
+			parent->repositoryleftChild = deleteNode;
+		}
+		else if (parent->repositoryrightChild == temp)
+		{
+			parent->repositoryrightChild = deleteNode;
+		}
+		delete temp;
+		temp = nullptr;
+		return;
+	}
+	else if (deleteNode->repositoryrightChild != nullptr)
+	{
+		temp = deleteNode;
+		parent = temp->repositoryParent;
+		deleteNode = deleteNode->repositoryrightChild;
+		if (parent->repositoryleftChild == temp)
+		{
+			parent->repositoryleftChild = deleteNode;
+		}
+		else if (parent->repositoryrightChild == temp)
+		{
+			parent->repositoryrightChild = deleteNode;
+		}
+		delete temp;
+		temp = nullptr;
+		return;
+	}
+	else
+	{
+		temp = deleteNode;
+		parent = temp->repositoryParent;
+		if (parent->repositoryleftChild == temp)
+		{
+			parent->repositoryleftChild = nullptr;
+		}
+		else if (parent->repositoryrightChild == temp)
+		{
+			parent->repositoryrightChild = nullptr;
+		}
+		delete deleteNode;
+		deleteNode = nullptr;
+		return;
 	}
 }
 
