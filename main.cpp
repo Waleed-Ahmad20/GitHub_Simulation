@@ -40,12 +40,12 @@ int main()
 	User obj4("Faran", 3);
 
 	Social network;
-	network.addEdge(obj1, obj2);
-	network.addEdge(obj1, obj4);
-	network.addEdge(obj2, obj1);
-	network.addEdge(obj2, obj3);
-	network.addEdge(obj2, obj4);
-	network.addEdge(obj4, obj2);
+	network.followUser(obj1, obj2);
+	network.followUser(obj1, obj4);
+	network.followUser(obj2, obj1);
+	network.followUser(obj2, obj3);
+	network.followUser(obj2, obj4);
+	network.followUser(obj4, obj2);
 
 	cout << endl;
 
@@ -53,13 +53,16 @@ int main()
 
 	cout << endl;
 
-	cout << network.isFollowing(obj1, obj2);
-	cout << network.isFollowing(obj1, obj3);
-	cout << network.isFollowing(obj2, obj1);
+	cout << network.isFollowingUser(obj1, obj2);
+	cout << network.isFollowingUser(obj1, obj3);
+	cout << network.isFollowingUser(obj2, obj1);
 
 
+	cout << endl;
 
-
+	cout << "After unfollowing: " << endl;
+	network.unfollowUser(obj1, obj2);
+	cout << network.isFollowingUser(obj1, obj2);
 
 	return 0;
 }
