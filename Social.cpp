@@ -1,5 +1,7 @@
 #include"User.h"
 #include "Social.h"
+#include<fstream>
+#include<sstream>
 
 unode::unode(string u, int id) {
 	user = u;
@@ -23,14 +25,25 @@ void Social::addEdge(User& source, User& destination) {
 
 bool Social::isFollowingUser(User& source, User& destination) {
 	if (source.getUserID() >= 0 && destination.getUserID() >= 0) {
-		unode* current = adjacencyLists[source.getUserID()];
-		while (current) {
-			if (current->user == destination.getName() && current->uid == destination.getUserID()) {
-				return true;
+		ifstream input("followingID.csv");
+		
+		if (input.is_open()) {
+			string line;
+			while (getline(input, line)) {
+				stringstream ss(line);
+				string csvSourceID, csvDestinationID;
+
+				if (getline(ss, csvSourceID, '-') && getline(ss, csvDestinationID)) {
+					if (csvSourceID == to_string(source.getUserID()) && csvDestinationID == to_string(destination.getUserID())) {
+						input.close();
+						return true;
+					}
+				}
 			}
-			else {
-				current = current->next;
-			}
+			input.close();
+		}
+		else {
+			cout << "Cannot open the followingID.csv file" << endl;
 		}
 	}
 	else {
@@ -40,14 +53,23 @@ bool Social::isFollowingUser(User& source, User& destination) {
 }
 
 void Social::printSocialNetwork() {
-	for (int i = 0; i < vertices; i++) {
-		unode* current = adjacencyLists[i];
-		cout << "User ID " << i << " -> ";
-		while (current) {
-			cout << current->user << " ";
-			current = current->next;
+	ifstream input("followingName.csv");
+
+	if (input.is_open()) {
+		string line;
+		while (getline(input, line)) {
+			stringstream ss(line);
+			string csvSourceName, csvDestinationName;
+
+			if (getline(ss, csvSourceName, '-') && getline(ss, csvDestinationName)) {
+				cout << csvSourceName << "->" << csvDestinationName << " ";
+				input.close();
+			}
 		}
-		cout << endl;
+		input.close();
+	}
+	else {
+		cout << "Cannot open the following.csv file" << endl;
 	}
 }
 
@@ -55,6 +77,24 @@ void Social::followUser(User& source, User& destination) {
 	if (source.getUserID() >= 0 && destination.getUserID() >= 0) {
 		if (!isFollowingUser(source, destination)) {
 			addEdge(source, destination);
+
+			ofstream output("followingID.csv", ios::app);
+			ofstream network("followingName.csv", ios::app);
+
+			if (output.is_open()) {
+				output << source.getUserID() << '-' << destination.getUserID() << endl;
+				if (network.is_open()) {
+					network << source.getName() << '-' << destination.getName() << endl;
+				}
+				else {
+					cout << "Cannot open the followingName.csv file" << endl;
+				}
+			}
+			else {
+				cout << "Cannot open the followingID.csv file" << endl;
+			}
+			output.close();
+			network.close();
 		}
 		else {
 			cout << "You are already following " << destination.getName() << "!" << endl;
@@ -92,7 +132,7 @@ void Social::unfollowUser(User& source, User& destination) {
 			}
 		}
 	}
-		else {
+	else {
 		cout << "Either one or both of the users do not exist!" << endl;
 	}
 }

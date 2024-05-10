@@ -1,6 +1,6 @@
 #include"User.h"
 
-int User::numOfUsers = 0; 
+int User::numOfUsers = 0;
 
 User::User(string uName, int uID) {
 	username = uName;

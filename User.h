@@ -6,7 +6,7 @@
 using namespace std;
 
 class User {
-private: 
+private:
 	string username;
 	int userID;
 	static int numOfUsers;
