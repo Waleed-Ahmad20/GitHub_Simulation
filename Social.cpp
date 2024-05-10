@@ -28,9 +28,9 @@ bool Social::isFollowingUser(User& source, User& destination) {
 		ifstream input("followingID.csv");
 		
 		if (input.is_open()) {
-			string line;
-			while (getline(input, line)) {
-				stringstream ss(line);
+			string oneLine;
+			while (getline(input, oneLine)) {
+				stringstream ss(oneLine);
 				string csvSourceID, csvDestinationID;
 
 				if (getline(ss, csvSourceID, '-') && getline(ss, csvDestinationID)) {
@@ -56,15 +56,29 @@ void Social::printSocialNetwork() {
 	ifstream input("followingName.csv");
 
 	if (input.is_open()) {
-		string line;
-		while (getline(input, line)) {
-			stringstream ss(line);
+		string oneLine;
+		string currentUser;
+		string following;
+
+		while (getline(input, oneLine)) {
+			stringstream ss(oneLine);
 			string csvSourceName, csvDestinationName;
 
 			if (getline(ss, csvSourceName, '-') && getline(ss, csvDestinationName)) {
-				cout << csvSourceName << "->" << csvDestinationName << " ";
-				input.close();
+				if (csvSourceName != currentUser) {
+					if (!currentUser.empty()) {
+						cout << currentUser << "->" << following << endl;
+					}
+					currentUser = csvSourceName;
+					following = csvDestinationName;
+				}
+				else {
+					following += " " + csvDestinationName;
+				}
 			}
+		}
+		if (!currentUser.empty()) {
+			cout << currentUser << "->" << following << endl;
 		}
 		input.close();
 	}
@@ -111,24 +125,29 @@ void Social::unfollowUser(User& source, User& destination) {
 			cout << "You cannot unfollow a user that you haven't followed!" << endl;
 		}
 		else {
-			unode* previous = nullptr;
-			unode* current = adjacencyLists[source.getUserID()];
-			while (current) {
-				if (current->uid == destination.getUserID() && current->user == destination.getName()) {
-					break;
+			ifstream input("followingID.csv");
+			ofstream write("write.csv");
+
+			if (input.is_open() && write.is_open()) {
+				string oneLine;
+
+				while (getline(input, oneLine)) {
+					stringstream ss(oneLine);
+					string csvSourceID, csvDestinationID;
+
+					if (getline(ss, csvSourceID, '-') && getline(ss, csvDestinationID)) {
+						if (csvSourceID != to_string(source.getUserID()) || csvDestinationID != to_string(destination.getUserID())) {
+							write << oneLine << endl;
+						}
+					}
 				}
-				previous = current;
-				current = current->next;
+				input.close();
+				write.close();
+				remove("followingID.csv");
+				rename("write.csv", "followingID.csv");
 			}
-			if (current) {
-				if (previous) {
-					previous->next = current->next;
-					delete current;
-				}
-				else {
-					adjacencyLists[source.getUserID()] = current->next;
-					delete current;
-				}
+			else {
+				cout << "Cannot open followingID.csv or write.csv or both" << endl;
 			}
 		}
 	}
