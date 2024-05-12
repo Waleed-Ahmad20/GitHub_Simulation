@@ -10,23 +10,23 @@ unode::unode(string u, int id) {
 }
 
 Social::Social() {
-	vertices = UNode::getNumofUsers();
+	vertices = ChainHash::sizeReturn();
 	adjacencyLists = new unode * [vertices];
 	for (int i = 0; i < vertices; i++) {
 		adjacencyLists[i] = nullptr;
 	}
 }
 
-void Social::addEdge(UNode*& source, UNode*& destination) {
+void Social::addEdge(UNod*& source, UNod*& destination) {
 	unode* newNode = new unode(destination->getName(), destination->getUserID());
 	newNode->next = adjacencyLists[source->getUserID()];
 	adjacencyLists[source->getUserID()] = newNode;
 }
 
-bool Social::isFollowingUser(UNode*& source, UNode*& destination) {
+bool Social::isFollowingUser(UNod*& source, UNod*& destination) {
 	if (source->getUserID() >= 0 && destination->getUserID() >= 0) {
 		ifstream input("followingID.csv");
-		
+
 		if (input.is_open()) {
 			string oneLine;
 			while (getline(input, oneLine)) {
@@ -87,7 +87,7 @@ void Social::printSocialNetwork() {
 	}
 }
 
-void Social::followUser(UNode*& source, UNode*& destination) {
+void Social::followUser(UNod*& source, UNod*& destination) {
 	if (source->getUserID() >= 0 && destination->getUserID() >= 0) {
 		if (!isFollowingUser(source, destination)) {
 			addEdge(source, destination);
@@ -119,7 +119,7 @@ void Social::followUser(UNode*& source, UNode*& destination) {
 	}
 }
 
-void Social::unfollowUser(UNode*& source, UNode*& destination) {
+void Social::unfollowUser(UNod*& source, UNod*& destination) {
 	if (source->getUserID() >= 0 && destination->getUserID() >= 0) {
 		if (!isFollowingUser(source, destination)) {
 			cout << "You cannot unfollow a user that you haven't followed!" << endl;
@@ -155,4 +155,3 @@ void Social::unfollowUser(UNode*& source, UNode*& destination) {
 		cout << "Either one or both of the users do not exist!" << endl;
 	}
 }
-

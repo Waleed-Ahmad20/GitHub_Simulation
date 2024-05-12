@@ -7,17 +7,18 @@
 #include<string>
 using namespace std;
 
-class UNode {
+class UNod {
 private:
 	string username;
 	string password;
 	bool userLoginStatus;
 	int userID;
 	static int numOfUsers;
-	UNode* next;
+	UNod* next;
+	string getPass();
 public:
 	friend class ChainHash;
-	UNode(string uName, int uID, string uPass);
+	UNod(string uName, int uID, string uPass);
 	string getName();
 	int getUserID();
 	static int getNumofUsers();
@@ -26,11 +27,13 @@ public:
 class ChainHash {
 private:
 	static const int size = 25;
-	UNode* table[size];
+	UNod* table[size];
 public:
 	ChainHash();
+	static const int sizeReturn();
 	int hashFunction(string uName);
-	UNode* signUp(string uName, int uID, string uPass);
+	UNod* findUser(string uName);
+	bool signUp(string uName, int uID, string uPass);
 	void signIn(string uName, string uPass);
 	void signOut(string uName);
 	void loadUsers();

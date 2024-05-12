@@ -15,13 +15,13 @@ class Social {
 private:
 	int vertices;
 	unode** adjacencyLists;
-	void addEdge(UNode*& source, UNode*& destination);
+	void addEdge(UNod*& source, UNod*& destination);
 public:
 	Social();
 	void printSocialNetwork();
-	void followUser(UNode*& source, UNode*& destination);
-	void unfollowUser(UNode*& source, UNode*& destination);
-	bool isFollowingUser(UNode*& source, UNode*& destination);
+	void followUser(UNod*& source, UNod*& destination);
+	void unfollowUser(UNod*& source, UNod*& destination);
+	bool isFollowingUser(UNod*& source, UNod*& destination);
 };
 
 #endif
