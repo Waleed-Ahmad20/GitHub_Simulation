@@ -36,24 +36,24 @@ class Repository {
 private:
 	node* rootRepository;
 
-	void repDelete(UNod& user, node* repName);
+	void repDelete(string user, node* repName);
 
 public:
 	Repository();
-	bool findRepository(UNod& user, string repName, node*& findRep);
-	void repositoryCreate(UNod& user, bool _visibility, string repName);
-	void repositoryDelete(UNod& user, string repName);
-	void repositoryFork(UNod& user1, UNod& user2, string originalRepName, string newRepName);
-	void PerformCommit(UNod& user, string repName, string commitText);
-	void viewStats(UNod& user, string repName);
-	void fileAdd(UNod& user, string repName, string fileName);
-	void fileDelete(UNod& user, string repName, string fileName);
+	bool findRepository(string user, string repName, node*& findRep);
+	void repositoryCreate(string user, bool _visibility, string repName);
+	void repositoryDelete(string user, string repName);
+	void repositoryFork(string user1, string user2, string originalRepName, string newRepName);
+	void PerformCommit(string user, string repName, string commitText);
+	void viewStats(string user, string repName);
+	void fileAdd(string user, string repName, string fileName);
+	void fileDelete(string user, string repName, string fileName);
 	void showAllRepositories(node* root);
 	node* getRoot();
 	bool getVisibility(node* rep);
-	void getFile(UNod& user, node* rep, string fileName);
-	bool checkSameFiles(UNod& user, string repName, string fileNAme);
-	bool checkSameCommits(UNod& user, string repName, string commitText);
+	void getFile(string user, node* rep, string fileName);
+	bool checkSameFiles(string user, string repName, string fileNAme);
+	bool checkSameCommits(string user, string repName, string commitText);
 };
 
 #endif

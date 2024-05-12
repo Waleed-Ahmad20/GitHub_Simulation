@@ -27,7 +27,7 @@ node::node(string name, bool _visibility)
 
 }
 
-bool Repository::checkSameFiles(UNod& user, string repName, string fileName)
+bool Repository::checkSameFiles(string user, string repName, string fileName)
 {
 	ifstream read("file.csv");
 	if (read.is_open())
@@ -39,7 +39,7 @@ bool Repository::checkSameFiles(UNod& user, string repName, string fileName)
 			string uName, reposName, fName;
 			if (getline(ss, uName, ' ') && getline(ss, reposName, ' ') && getline(ss, fName))
 			{
-				if (reposName == repName && uName == user.getName() && fileName == fName)
+				if (reposName == repName && uName == user && fileName == fName)
 				{
 					read.close();
 					return true;
@@ -56,7 +56,7 @@ bool Repository::checkSameFiles(UNod& user, string repName, string fileName)
 		return false;
 	}
 }
-bool Repository::checkSameCommits(UNod& user, string repName, string commitText)
+bool Repository::checkSameCommits(string user, string repName, string commitText)
 {
 	ifstream read("commits.csv");
 	if (read.is_open())
@@ -68,7 +68,7 @@ bool Repository::checkSameCommits(UNod& user, string repName, string commitText)
 			string uName, reposName, cText;
 			if (getline(ss, uName, ' ') && getline(ss, reposName, ' ') && getline(ss, cText))
 			{
-				if (reposName == repName && uName == user.getName())
+				if (reposName == repName && uName == user)
 				{
 					read.close();
 					return true;
@@ -85,7 +85,7 @@ bool Repository::checkSameCommits(UNod& user, string repName, string commitText)
 	}
 }
 
-bool Repository::findRepository(UNod& user, string repName, node*& findRep) {
+bool Repository::findRepository(string user, string repName, node*& findRep) {
 	node* current = rootRepository;
 	while (current) {
 		if (repName.compare(current->repositoryName) < 0) {
@@ -111,7 +111,7 @@ bool Repository::findRepository(UNod& user, string repName, node*& findRep) {
 			string uName, reposName, _visibility;
 			if (getline(ss, uName, ' ') && getline(ss, reposName, ' ') && getline(ss, _visibility))
 			{
-				if (reposName == repName && uName == user.getName())
+				if (reposName == repName && uName == user)
 				{
 					read.close();
 					return true;
@@ -140,7 +140,7 @@ void Repository::showAllRepositories(node* root)
 	showAllRepositories(root->repositoryrightChild);
 }
 
-void Repository::repositoryCreate(UNod& user, bool _visibility, string repName)
+void Repository::repositoryCreate(string user, bool _visibility, string repName)
 {
 	node* repNode = nullptr;
 	findRepository(user, repName, repNode);
@@ -188,7 +188,7 @@ void Repository::repositoryCreate(UNod& user, bool _visibility, string repName)
 			ofstream write("repository.csv", ios::app);
 			if (write.is_open())
 			{
-				write << user.getName() << " " << repNode->repositoryName << " " << repNode->visibility << endl;
+				write << user << " " << repNode->repositoryName << " " << repNode->visibility << endl;
 			}
 			write.close();
 		}
@@ -200,7 +200,7 @@ void Repository::repositoryCreate(UNod& user, bool _visibility, string repName)
 	}
 }
 
-void Repository::repositoryDelete(UNod& user, string repName)
+void Repository::repositoryDelete(string user, string repName)
 {
 	node* deleteNode = nullptr;
 	findRepository(user, repName, deleteNode);
@@ -216,99 +216,7 @@ void Repository::repositoryDelete(UNod& user, string repName)
 
 }
 
-void Repository::repositoryFork(UNod& user1, UNod& user2, string originalRepName, string newRepName)
-{
-	node* temp1;
-	node* temp2;
-
-	if (findRepository(user2, newRepName, temp2) && (findRepository(user1, originalRepName, temp1)))
-	{
-		if (temp2->visibility == 0)
-		{
-			cout << "Profile is private! Fork cannot be created " << endl;
-			return;
-		}
-		else
-		{
-			bool _visibility;
-			do {
-				cout << "Choose visibility of the fork repository that you are copying(1,0): ";
-				cin >> _visibility;
-
-			} while (_visibility != 1 && _visibility != 0);
-
-			bool Write = true;
-			ifstream read1("repository.csv");
-			if (read1.is_open())
-			{
-				string line;
-				while (getline(read1, line))
-				{
-					stringstream ss(line);
-					string u, rep, vis;
-					if (getline(ss, u, ' ') && getline(ss, rep, ' ') && getline(ss, vis))
-					{
-						if (user1.getName() == u && rep == originalRepName)
-						{
-							Write = false;
-						}
-					}
-
-				}
-			}
-			if (Write == false)
-			{
-				ofstream write1("repository.csv", ios::app);
-				if (write1.is_open())
-				{
-					write1 << user1.getName() << " " << newRepName << " " << to_string(_visibility) << endl;
-				}
-				write1.close();
-			}
-
-			ifstream read("file.csv");
-			ofstream write("newFile.csv", ios::app);
-
-			if (read.is_open() && write.is_open())
-			{
-				string line;
-				vector<string> forkFiles;
-				while (getline(read, line))
-				{
-					stringstream ss(line);
-					string uname, repName, file;
-
-					if (getline(ss, uname, ' ') && getline(ss, repName, ' ') && getline(ss, file))
-					{
-						if (uname == user2.getName() && repName == newRepName)
-						{
-							forkFiles.push_back(file);
-							write << line << endl;
-						}
-					}
-				}
-				for (int i = 0; i < forkFiles.size(); i++)
-				{
-					cout << forkFiles[i] << endl;
-					write << user1.getName() << " " << originalRepName << " " << forkFiles[i] << endl;
-				}
-			}
-			read.close();
-			write.close();
-			remove("file.csv");
-			rename("newFile.csv", "file.csv");
-		}
-	}
-	else
-	{
-		cout << "Either one or both repositories do not exist!" << endl;
-	}
-
-
-
-}
-
-void Repository::repDelete(UNod& user, node* deleteNode)
+void Repository::repDelete(string user, node* deleteNode)
 {
 	ifstream read("repository.csv");
 	ofstream write("newRepository.csv");
@@ -325,7 +233,7 @@ void Repository::repDelete(UNod& user, node* deleteNode)
 
 				if (getline(ss, uName, ' ') && getline(ss, repName, ' ') && getline(ss, _visibility))
 				{
-					if (uName != user.getName() || repName != deleteNode->repositoryName || _visibility != to_string(deleteNode->visibility))
+					if (uName != user || repName != deleteNode->repositoryName || _visibility != to_string(deleteNode->visibility))
 					{
 						write << line << endl;
 					}
@@ -402,15 +310,18 @@ void Repository::repDelete(UNod& user, node* deleteNode)
 	{
 		temp = deleteNode;
 		parent = temp->repositoryParent;
-		if (parent->repositoryleftChild == temp)
+		if (parent != nullptr)
 		{
-			parent->repositoryleftChild = nullptr;
+			if (parent->repositoryleftChild == temp)
+			{
+				parent->repositoryleftChild = nullptr;
+			}
+			else if (parent->repositoryrightChild == temp)
+			{
+				parent->repositoryrightChild = nullptr;
+			}
 		}
-		else if (parent->repositoryrightChild == temp)
-		{
-			parent->repositoryrightChild = nullptr;
-		}
-		delete temp;;
+		delete temp;
 		temp = nullptr;
 	}
 
@@ -418,7 +329,99 @@ void Repository::repDelete(UNod& user, node* deleteNode)
 
 }
 
-void Repository::PerformCommit(UNod& user, string repName, string commitText)
+void Repository::repositoryFork(string user1, string user2, string originalRepName, string newRepName)
+{
+	node* temp1;
+	node* temp2;
+
+	if (findRepository(user2, newRepName, temp2) && (findRepository(user1, originalRepName, temp1)))
+	{
+		if (temp2->visibility == 0)
+		{
+			cout << "Profile is private! Fork cannot be created " << endl;
+			return;
+		}
+		else
+		{
+			bool _visibility;
+			do {
+				cout << "Choose visibility of the fork repository that you are copying(1,0): ";
+				cin >> _visibility;
+
+			} while (_visibility != 1 && _visibility != 0);
+
+			bool Write = true;
+			ifstream read1("repository.csv");
+			if (read1.is_open())
+			{
+				string line;
+				while (getline(read1, line))
+				{
+					stringstream ss(line);
+					string u, rep, vis;
+					if (getline(ss, u, ' ') && getline(ss, rep, ' ') && getline(ss, vis))
+					{
+						if (user1 == u && rep == originalRepName)
+						{
+							Write = false;
+						}
+					}
+
+				}
+			}
+			if (Write == false)
+			{
+				ofstream write1("repository.csv", ios::app);
+				if (write1.is_open())
+				{
+					write1 << user1 << " " << newRepName << " " << to_string(_visibility) << endl;
+				}
+				write1.close();
+			}
+
+			ifstream read("file.csv");
+			ofstream write("newFile.csv", ios::app);
+
+			if (read.is_open() && write.is_open())
+			{
+				string line;
+				vector<string> forkFiles;
+				while (getline(read, line))
+				{
+					stringstream ss(line);
+					string uname, repName, file;
+
+					if (getline(ss, uname, ' ') && getline(ss, repName, ' ') && getline(ss, file))
+					{
+						if (uname == user2 && repName == newRepName)
+						{
+							forkFiles.push_back(file);
+							write << line << endl;
+						}
+					}
+				}
+				for (int i = 0; i < forkFiles.size(); i++)
+				{
+					cout << forkFiles[i] << endl;
+					write << user1 << " " << originalRepName << " " << forkFiles[i] << endl;
+				}
+			}
+			read.close();
+			write.close();
+			remove("file.csv");
+			rename("newFile.csv", "file.csv");
+		}
+	}
+	else
+	{
+		cout << "Either one or both repositories do not exist!" << endl;
+	}
+
+
+
+}
+
+void Repository::PerformCommit(string user, string repName, string commitText)
 {
 	node* current = nullptr;
 	findRepository(user, repName, current);
@@ -455,7 +458,7 @@ void Repository::PerformCommit(UNod& user, string repName, string commitText)
 
 		if (read.is_open() && write.is_open())
 		{
-			write << user.getName() << " " << current->repositoryName << " " << current->commit->data << endl;
+			write << user << " " << current->repositoryName << " " << current->commit->data << endl;
 			string line;
 			while (getline(read, line))
 			{
@@ -484,7 +487,7 @@ void Repository::PerformCommit(UNod& user, string repName, string commitText)
 }
 
 
-void Repository::viewStats(UNod& user, string repName)
+void Repository::viewStats(string user, string repName)
 {
 	node* tempRep = nullptr;
 	findRepository(user, repName, tempRep);
@@ -492,48 +495,64 @@ void Repository::viewStats(UNod& user, string repName)
 	ifstream read1("file.csv");
 	if (read1.is_open())
 	{
-		cout << "User: " << user.getName() << ", Repository: " << tempRep->repositoryName << ", Files: ";
-		string line;
-		while (getline(read1, line))
+		if (findRepository(user, repName, tempRep))
 		{
-			stringstream ss(line);
-			string username, reposname, filename;
-			if (getline(ss, username, ' ') && getline(ss, reposname, ' ') && getline(ss, filename, ' '))
+			cout << "User: " << user << ", Repository: " << tempRep->repositoryName << ", Files: ";
+			string line;
+			while (getline(read1, line))
 			{
-				if (username == user.getName() && reposname == tempRep->repositoryName)
+				stringstream ss(line);
+				string username, reposname, filename;
+				if (getline(ss, username, ' ') && getline(ss, reposname, ' ') && getline(ss, filename, ' '))
 				{
-					cout << filename << " ";
+					if (username == user && reposname == tempRep->repositoryName)
+					{
+						cout << filename << " ";
+					}
 				}
 			}
+			cout << endl;
 		}
-		cout << endl;
+		else
+		{
+			cout << "User: " << user << ", Repository:  " << ", Files: ";
+		}
+
 	}
 	read1.close();
 
 	ifstream read2("commits.csv");
 	if (read2.is_open())
 	{
-		cout << "User: " << user.getName() << ", Repository: " << tempRep->repositoryName << ", Commits: ";
-		string line;
-		while (getline(read2, line))
+		if (findRepository(user, repName, tempRep))
 		{
-			stringstream ss(line);
-			string username, reposname, commit;
-			if (getline(ss, username, ' ') && getline(ss, reposname, ' ') && getline(ss, commit, ' '))
+			cout << "User: " << user << ", Repository: " << tempRep->repositoryName << ", Commits: ";
+			string line;
+			while (getline(read2, line))
 			{
-				if (username == user.getName() && reposname == tempRep->repositoryName)
+				stringstream ss(line);
+				string username, reposname, commit;
+				if (getline(ss, username, ' ') && getline(ss, reposname, ' ') && getline(ss, commit, ' '))
 				{
-					cout << commit << " ";
+					if (username == user && reposname == tempRep->repositoryName)
+					{
+						cout << commit << " ";
+					}
 				}
 			}
+			cout << endl;
 		}
-		cout << endl;
+		else
+		{
+			cout << "User: " << user << ", Repository:  " << ", Commits: ";
+		}
+
 	}
 	read2.close();
 
 }
 
-void Repository::fileAdd(UNod& user, string repName, string fileName)
+void Repository::fileAdd(string user, string repName, string fileName)
 {
 	node* current = nullptr;
 	findRepository(user, repName, current);
@@ -571,7 +590,7 @@ void Repository::fileAdd(UNod& user, string repName, string fileName)
 			ofstream write("file.csv", ios::app);
 			if (write.is_open())
 			{
-				write << user.getName() << " " << current->repositoryName << " " << newFile->data << endl;
+				write << user << " " << current->repositoryName << " " << newFile->data << endl;
 			}
 			write.close();
 		}
@@ -583,7 +602,7 @@ void Repository::fileAdd(UNod& user, string repName, string fileName)
 
 }
 
-void Repository::fileDelete(UNod& user, string repName, string fileName)
+void Repository::fileDelete(string user, string repName, string fileName)
 {
 	node* current = nullptr;
 	findRepository(user, repName, current);
@@ -629,7 +648,7 @@ void Repository::fileDelete(UNod& user, string repName, string fileName)
 					string uName, reposName, fName;
 					if (getline(ss, uName, ' ') && getline(ss, reposName, ' ') && getline(ss, fName, ' '))
 					{
-						if (uName != user.getName() || reposName != current->repositoryName || fName != fileName)
+						if (uName != user || reposName != current->repositoryName || fName != fileName)
 						{
 							write << line << endl;
 						}
@@ -667,7 +686,7 @@ bool Repository::getVisibility(node* rep)
 	return rep->visibility;
 }
 
-void Repository::getFile(UNod& user, node* rep, string fileName)
+void Repository::getFile(string user, node* rep, string fileName)
 {
 	LinkedlistNode* temp = rep->file;
 	while (temp != nullptr && temp->data != fileName)
