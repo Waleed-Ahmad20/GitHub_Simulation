@@ -63,7 +63,7 @@ UNod* ChainHash::findUser(string uName) {
 				while (preRegistered != nullptr && preRegistered->getName() != uName) {
 					preRegistered = preRegistered->next;
 				}
-				return preRegistered;	
+				return preRegistered;
 			}
 		}
 		read.close();

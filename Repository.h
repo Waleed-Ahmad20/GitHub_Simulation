@@ -4,6 +4,8 @@
 
 #include<iostream>
 #include<string>
+#include"Social.h"
+#include"User.h"
 using namespace std;
 
 class LinkedlistNode {
@@ -34,20 +36,24 @@ class Repository {
 private:
 	node* rootRepository;
 
-	void repDelete(node* repName);
+	void repDelete(UNod& user, node* repName);
 
 public:
 	Repository();
-	node* findRepository(string repName);
-	void repositoryCreate(bool _visibility, string repName);
-	void repositoryDelete(string repName);
-	void repositoryFork(string originalRepName, string newRepName);
-	void PerformCommit(string repName, string commitText);
-	void viewStats(string repName);
-	void fileAdd(string repName, string fileName);
-	void fileDelete(string repName, string fileName);
+	bool findRepository(UNod& user, string repName, node*& findRep);
+	void repositoryCreate(UNod& user, bool _visibility, string repName);
+	void repositoryDelete(UNod& user, string repName);
+	void repositoryFork(UNod& user1, UNod& user2, string originalRepName, string newRepName);
+	void PerformCommit(UNod& user, string repName, string commitText);
+	void viewStats(UNod& user, string repName);
+	void fileAdd(UNod& user, string repName, string fileName);
+	void fileDelete(UNod& user, string repName, string fileName);
 	void showAllRepositories(node* root);
 	node* getRoot();
+	bool getVisibility(node* rep);
+	void getFile(UNod& user, node* rep, string fileName);
+	bool checkSameFiles(UNod& user, string repName, string fileNAme);
+	bool checkSameCommits(UNod& user, string repName, string commitText);
 };
 
 #endif
