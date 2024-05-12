@@ -34,10 +34,13 @@ int main()
 
 	cout << endl;
 
-	User obj1("Waleed", 0);
-	User obj2("Soban", 1);
-	User obj3("Mani", 2);
-	User obj4("Faran", 3);
+	ChainHash hashobj;
+	hashobj.loadUsers();
+
+	UNode* obj1 = hashobj.signUp("Waleed", 0, "Pass");
+	UNode* obj2 = hashobj.signUp("Soban", 1, "Pass");
+	UNode* obj3 = hashobj.signUp("Mani", 2, "Pass");
+	UNode* obj4 = hashobj.signUp("Faran", 3, "Pass");
 
 	Social network;
 	network.followUser(obj1, obj2);

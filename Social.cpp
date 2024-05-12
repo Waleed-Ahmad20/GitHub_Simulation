@@ -10,21 +10,21 @@ unode::unode(string u, int id) {
 }
 
 Social::Social() {
-	vertices = User::getNumofUsers();
+	vertices = UNode::getNumofUsers();
 	adjacencyLists = new unode * [vertices];
 	for (int i = 0; i < vertices; i++) {
 		adjacencyLists[i] = nullptr;
 	}
 }
 
-void Social::addEdge(User& source, User& destination) {
-	unode* newNode = new unode(destination.getName(), destination.getUserID());
-	newNode->next = adjacencyLists[source.getUserID()];
-	adjacencyLists[source.getUserID()] = newNode;
+void Social::addEdge(UNode*& source, UNode*& destination) {
+	unode* newNode = new unode(destination->getName(), destination->getUserID());
+	newNode->next = adjacencyLists[source->getUserID()];
+	adjacencyLists[source->getUserID()] = newNode;
 }
 
-bool Social::isFollowingUser(User& source, User& destination) {
-	if (source.getUserID() >= 0 && destination.getUserID() >= 0) {
+bool Social::isFollowingUser(UNode*& source, UNode*& destination) {
+	if (source->getUserID() >= 0 && destination->getUserID() >= 0) {
 		ifstream input("followingID.csv");
 		
 		if (input.is_open()) {
@@ -34,7 +34,7 @@ bool Social::isFollowingUser(User& source, User& destination) {
 				string csvSourceID, csvDestinationID;
 
 				if (getline(ss, csvSourceID, '-') && getline(ss, csvDestinationID)) {
-					if (csvSourceID == to_string(source.getUserID()) && csvDestinationID == to_string(destination.getUserID())) {
+					if (csvSourceID == to_string(source->getUserID()) && csvDestinationID == to_string(destination->getUserID())) {
 						input.close();
 						return true;
 					}
@@ -87,8 +87,8 @@ void Social::printSocialNetwork() {
 	}
 }
 
-void Social::followUser(User& source, User& destination) {
-	if (source.getUserID() >= 0 && destination.getUserID() >= 0) {
+void Social::followUser(UNode*& source, UNode*& destination) {
+	if (source->getUserID() >= 0 && destination->getUserID() >= 0) {
 		if (!isFollowingUser(source, destination)) {
 			addEdge(source, destination);
 
@@ -96,9 +96,9 @@ void Social::followUser(User& source, User& destination) {
 			ofstream network("followingName.csv", ios::app);
 
 			if (output.is_open()) {
-				output << source.getUserID() << '-' << destination.getUserID() << endl;
+				output << source->getUserID() << '-' << destination->getUserID() << endl;
 				if (network.is_open()) {
-					network << source.getName() << '-' << destination.getName() << endl;
+					network << source->getName() << '-' << destination->getName() << endl;
 				}
 				else {
 					cout << "Cannot open the followingName.csv file" << endl;
@@ -111,7 +111,7 @@ void Social::followUser(User& source, User& destination) {
 			network.close();
 		}
 		else {
-			cout << "You are already following " << destination.getName() << "!" << endl;
+			cout << "You are already following " << destination->getName() << "!" << endl;
 		}
 	}
 	else {
@@ -119,8 +119,8 @@ void Social::followUser(User& source, User& destination) {
 	}
 }
 
-void Social::unfollowUser(User& source, User& destination) {
-	if (source.getUserID() >= 0 && destination.getUserID() >= 0) {
+void Social::unfollowUser(UNode*& source, UNode*& destination) {
+	if (source->getUserID() >= 0 && destination->getUserID() >= 0) {
 		if (!isFollowingUser(source, destination)) {
 			cout << "You cannot unfollow a user that you haven't followed!" << endl;
 		}
@@ -136,7 +136,7 @@ void Social::unfollowUser(User& source, User& destination) {
 					string csvSourceID, csvDestinationID;
 
 					if (getline(ss, csvSourceID, '-') && getline(ss, csvDestinationID)) {
-						if (csvSourceID != to_string(source.getUserID()) || csvDestinationID != to_string(destination.getUserID())) {
+						if (csvSourceID != to_string(source->getUserID()) || csvDestinationID != to_string(destination->getUserID())) {
 							write << oneLine << endl;
 						}
 					}
